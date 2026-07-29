@@ -18,12 +18,17 @@ const getWebOrigin = () => {
 
 const webOrigin = getWebOrigin()
 
+export const selectDefaultServerUrl = ({ isNative, configuredUrl, webOrigin }) =>
+  normalizeServerUrl((isNative ? configuredUrl : webOrigin) || OFFICIAL_SERVER_URL)
+
 export const DEFAULT_SERVER_URL =
-  normalizeServerUrl(
-    (typeof import.meta !== 'undefined' && import.meta.env?.VITE_DEFAULT_SERVER_URL) ||
-      (isNativeRuntime ? OFFICIAL_SERVER_URL : webOrigin) ||
-      OFFICIAL_SERVER_URL
-  )
+  selectDefaultServerUrl({
+    isNative: isNativeRuntime,
+    configuredUrl:
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_DEFAULT_SERVER_URL) ||
+      OFFICIAL_SERVER_URL,
+    webOrigin
+  })
 
 export const resolveServerUrl = () => DEFAULT_SERVER_URL
 
